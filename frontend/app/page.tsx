@@ -175,14 +175,19 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen px-6 py-10 sm:px-10 vignette">
+    <div className="relative min-h-screen px-6 py-10 sm:px-10 vignette bg-cool">
       {loading && <div className="top-loader" />}
+      <div className="absolute left-1/2 -translate-x-1/2 top-12 pointer-events-none">
+        <div className="blob blob-1" style={{opacity:0.12}} />
+        <div className="blob blob-2" style={{opacity:0.08, marginTop: -80}} />
+        <div className="blob blob-3" style={{opacity:0.06, marginTop: -40}} />
+      </div>
       <div className="relative max-w-6xl mx-auto">
-        <header className="mb-8">
-          <div className="flex items-start justify-between gap-4">
+        <header className="mb-6">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">Misconception + IRT Analyzer</h1>
-              <p className="text-sm text-black/60 dark:text-white/60 mt-2">Analyze answers, predict misconceptions, estimate difficulty.</p>
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">Misconception <span className="text-gradient">+ IRT</span> Analyzer</h1>
+              <p className="text-sm text-black/60 dark:text-white/60 mt-2">Analyze answers, predict misconceptions, and estimate difficulty — fast.</p>
             </div>
             <ThemeToggle />
           </div>
@@ -329,7 +334,7 @@ export default function Home() {
               )}
             </div>
           </div>
-        </section>
+  </section>
 
         {error && (
           <div className="mt-6 p-3 rounded-lg border border-red-300/40 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-200">

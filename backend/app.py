@@ -1,4 +1,3 @@
-# app.py
 from __future__ import annotations
 import os, json, math
 from typing import Optional, List, Dict, Any
