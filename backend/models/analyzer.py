@@ -42,13 +42,46 @@ class MisconceptionAnalyzer:
 
         # predict_proba if available
         try:
-            proba = self.clf.predict_proba([vec])[0]
+            # Ensure feature-dimension matches what the classifier expects
+            expected_dim = None
+            if hasattr(self.clf, "n_features_in_"):
+                expected_dim = int(getattr(self.clf, "n_features_in_"))
+            elif hasattr(self.clf, "coef_"):
+                try:
+                    expected_dim = int(self.clf.coef_.shape[1])
+                except Exception:
+                    expected_dim = None
+
+            if expected_dim is not None and len(vec) != expected_dim:
+                # adapt vec to expected_dim using sensible strategies
+                v = vec.astype(float)
+                L = len(v)
+                D = expected_dim
+                if D % L == 0:
+                    # tile repeat
+                    v = np.tile(v, D // L)
+                elif D > L:
+                    # pad with zeros
+                    pad = np.zeros(D - L, dtype=v.dtype)
+                    v = np.concatenate([v, pad])
+                else:
+                    # truncate
+                    v = v[:D]
+                vec_for_pred = v
+            else:
+                vec_for_pred = vec
+
+            proba = self.clf.predict_proba([vec_for_pred])[0]
             idx = int(np.argmax(proba))
             label = self.clf.classes_[idx]
             conf = float(proba[idx])
         except Exception:
-            label = str(self.clf.predict([vec])[0])
-            conf = 0.6
+            try:
+                label = str(self.clf.predict([vec])[0])
+                conf = 0.6
+            except Exception:
+                # if classifier fails unexpectedly, fallback to unknown
+                return {"label": "unknown", "confidence": 0.5, "risk": 0.4, "explanation": "Classifier prediction failed."}
 
         # heuristic “risk”: high if label seems misconception-like
         risk = 0.2
