@@ -182,159 +182,120 @@ export default function Home() {
         <div className="blob blob-2" style={{opacity:0.08, marginTop: -80}} />
         <div className="blob blob-3" style={{opacity:0.06, marginTop: -40}} />
       </div>
-      <div className="relative max-w-6xl mx-auto">
-        <header className="mb-6">
-          <div className="flex items-center justify-between gap-4">
+      <div className="relative max-w-5xl mx-auto">
+        <nav className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] flex items-center justify-center text-white font-bold">MI</div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">Misconception <span className="text-gradient">+ IRT</span> Analyzer</h1>
-              <p className="text-sm text-black/60 dark:text-white/60 mt-2">Analyze answers, predict misconceptions, and estimate difficulty — fast.</p>
+              <div className="text-sm text-contrast-muted">Tool</div>
+              <div className="text-lg font-semibold text-surface-contrast">Misconception + IRT</div>
             </div>
+          </div>
+          <div>
             <ThemeToggle />
           </div>
-        </header>
-        <div className="divider" />
+        </nav>
 
-        <section className="grid md:grid-cols-2 gap-8">
-          <div className="card card-appear" style={{ animationDelay: '40ms' }}>
-            <h2 className="font-medium mb-1">Inputs</h2>
-            <p className="text-xs text-black/50 dark:text-white/50 mb-3">Provide the question, an ideal reference answer, and the learner’s answer.</p>
-            <div className="space-y-3">
-              <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Question" className="textarea" />
-              <textarea value={ideal} onChange={e=>setIdeal(e.target.value)} placeholder="Ideal (reference) answer" className="textarea" />
-              <textarea value={userAns} onChange={e=>setUserAns(e.target.value)} placeholder="User answer" className="textarea" />
-              <input value={qid} onChange={e=>setQid(e.target.value)} placeholder="Optional qid (number)" className="input" />
-            </div>
-            <div className="flex gap-2 mt-3">
-              <button onClick={loadSample} className="btn btn-primary">Load sample</button>
-              <button onClick={clearAll} className="btn btn-ghost">Clear</button>
-            </div>
-          </div>
-
-          <div className="grid grid-rows-3 gap-6">
-            <div className="card card-appear" style={{ animationDelay: '80ms' }}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">One-shot Analyze</h3>
-                <button
-                  onClick={onAnalyze}
-                  disabled={disabledAnalyze || loading!==null}
-                  aria-busy={loading==="analyze"}
-                  className="btn btn-primary disabled:opacity-50"
-                >
-                  {loading==="analyze" ? (
-                    <span className="inline-flex items-center gap-2"><span className="spinner" /> Analyzing...</span>
-                  ) : (
-                    "Analyze"
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-black/50 dark:text-white/50 mb-2">Compare the learner answer to the ideal and highlight guidance.</p>
-              {loading==="analyze" && (
-                <div className="space-y-2 mt-2">
-                  <div className="skeleton h-4 w-1/3" />
-                  <div className="skeleton h-2 w-full" />
-                  <div className="skeleton h-2 w-5/6" />
-                  <div className="skeleton h-20 w-full" />
+        <div className="app-shell bg-glass p-6 rounded-2xl border-gradient">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="col-span-1">
+              <div className="card-lg">
+                <h2 className="font-semibold mb-2 text-surface-contrast">Inputs</h2>
+                <p className="text-contrast-muted text-sm mb-3">Question, ideal answer, and student response.</p>
+                <div className="space-y-3">
+                  <textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Question" className="textarea" />
+                  <textarea value={ideal} onChange={e=>setIdeal(e.target.value)} placeholder="Ideal (reference) answer" className="textarea" />
+                  <textarea value={userAns} onChange={e=>setUserAns(e.target.value)} placeholder="User answer" className="textarea" />
+                  <input value={qid} onChange={e=>setQid(e.target.value)} placeholder="Optional qid (number)" className="input" />
                 </div>
-              )}
-              {analyzeOut && !loading && (
-                <div className="space-y-3 fade-in">
-                  <Progress value={analyzeOut?.similarity?.user_vs_ideal ?? 0} label="User vs Ideal" />
-                  <Progress value={analyzeOut?.similarity?.question_vs_ideal ?? 0} label="Question vs Ideal" />
-                  <Progress value={(analyzeOut?.answer_score ?? 0)} label="Answer Score" />
-                  <div className="mt-2 text-sm">
-                    <div className="font-medium mb-1">Guidance</div>
-                    <p className="text-black/70 dark:text-white/70">{analyzeOut?.guidance}</p>
+                <div className="mt-4 flex gap-2">
+                  <button onClick={loadSample} className="btn btn-primary">Load sample</button>
+                  <button onClick={clearAll} className="btn btn-ghost">Clear</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-span-2 grid grid-rows-3 gap-6">
+              <div className="card-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">One-shot Analyze</h3>
+                    <p className="text-contrast-muted text-sm">Compare user answer to ideal and get guidance.</p>
                   </div>
-                  <details className="mt-1">
-                    <summary className="cursor-pointer text-sm opacity-80">Details (JSON)</summary>
-                    <pre className="mt-2 text-xs overflow-auto p-2 rounded bg-black/5 dark:bg-white/10">{JSON.stringify(analyzeOut, null, 2)}</pre>
-                  </details>
+                  <div>
+                    <button
+                      onClick={onAnalyze}
+                      disabled={disabledAnalyze || loading!==null}
+                      aria-busy={loading==="analyze"}
+                      aria-label="Analyze user answer"
+                      className="btn btn-primary"
+                    >
+                      {loading==="analyze"? 'Analyzing...' : 'Analyze'}
+                    </button>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            <div className="card card-appear" style={{ animationDelay: '120ms' }}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">Predict Misconception</h3>
-                <button
-                  onClick={onMis}
-                  disabled={disabledMis || loading!==null}
-                  aria-busy={loading==="mis"}
-                  className="btn btn-primary disabled:opacity-50"
-                >
-                  {loading==="mis" ? (
-                    <span className="inline-flex items-center gap-2"><span className="spinner" /> Predicting...</span>
-                  ) : (
-                    "Predict"
-                  )}
-                </button>
-              </div>
-              <p className="text-xs text-black/50 dark:text-white/50 mb-2">Estimate likely misconception with confidence and risk.</p>
-              {loading==="mis" && (
-                <div className="space-y-2 mt-2">
-                  <div className="skeleton h-4 w-1/4" />
-                  <div className="skeleton h-2 w-2/3" />
-                  <div className="skeleton h-2 w-1/2" />
-                </div>
-              )}
-              {misOut && !loading && (
-                <div className="space-y-2 text-sm fade-in">
-                  <div className="flex gap-2 items-center">
-                    <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">label: {misOut?.label}</span>
-                    {typeof misOut?.confidence === 'number' && (
-                      <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">confidence: <CountUp value={(misOut?.confidence||0)*100} decimals={0} suffix="%" /></span>
-                    )}
-                    {typeof misOut?.risk === 'number' && (
-                      <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">risk: <CountUp value={(misOut?.risk||0)*100} decimals={0} suffix="%" /></span>
+                {analyzeOut ? (
+                  <div className="mt-4 w-full space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-2/3">
+                        <Progress value={analyzeOut?.similarity?.user_vs_ideal ?? 0} label="User vs Ideal" />
+                      </div>
+                      <div className="w-1/3 text-right text-sm text-contrast-muted">
+                        <div>Score: <strong><CountUp value={(analyzeOut?.similarity?.user_vs_ideal ?? 0) * 100} decimals={0} suffix="%" /></strong></div>
+                      </div>
+                    </div>
+
+                    {analyzeOut?.guidance && (
+                      <div className="text-sm text-contrast-muted">{analyzeOut.guidance}</div>
                     )}
                   </div>
-                  <details>
-                    <summary className="cursor-pointer opacity-80">Full JSON</summary>
-                    <pre className="mt-2 text-xs overflow-auto p-2 rounded bg-black/5 dark:bg-white/10">{JSON.stringify(misOut, null, 2)}</pre>
-                  </details>
-                </div>
-              )}
-            </div>
-
-            <div className="card card-appear" style={{ animationDelay: '160ms' }}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-medium">Estimate Difficulty</h3>
-                <button
-                  onClick={onDiff}
-                  disabled={disabledDiff || loading!==null}
-                  aria-busy={loading==="diff"}
-                  className="btn btn-primary disabled:opacity-50"
-                >
-                  {loading==="diff" ? (
-                    <span className="inline-flex items-center gap-2"><span className="spinner" /> Estimating...</span>
-                  ) : (
-                    "Estimate"
-                  )}
-                </button>
+                ) : (
+                  <div className="mt-3 text-sm text-contrast-muted">No analysis yet. Provide inputs and click <strong>Analyze</strong>.</div>
+                )}
               </div>
-              <p className="text-xs text-black/50 dark:text-white/50 mb-2">Infer question difficulty and bucket assignment.</p>
-              {loading==="diff" && (
-                <div className="space-y-2 mt-2">
-                  <div className="skeleton h-4 w-1/5" />
-                  <div className="skeleton h-2 w-2/3" />
+
+              <div className="card-lg grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="font-medium">Predict Misconception</h3>
+                  <p className="text-contrast-muted text-sm">Estimate label, confidence and risk.</p>
                 </div>
-              )}
-              {diffOut && !loading && (
-                <div className="space-y-2 text-sm fade-in">
-                  <div className="flex gap-2 items-center">
-                    {typeof diffOut?.difficulty_norm === 'number' && <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">norm: <CountUp value={diffOut?.difficulty_norm||0} decimals={3} /></span>}
-                    {diffOut?.bucket && <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">bucket: {diffOut?.bucket}</span>}
-                    {diffOut?.qid !== undefined && <span className="px-2 py-0.5 rounded-full bg-black/10 dark:bg-white/10 text-xs">qid: {diffOut?.qid}</span>}
+                <div className="text-right">
+                  <button onClick={onMis} disabled={disabledMis || loading!==null} aria-busy={loading==="mis"} className="btn btn-primary">Predict</button>
+                </div>
+                <div className="col-span-2">
+                  {misOut ? (
+                    <div className="mt-2 text-sm text-contrast-muted" aria-live="polite">
+                      <div>Label: <strong>{misOut.label}</strong></div>
+                      <div>Confidence: <strong>{((misOut.confidence||0) * 100).toFixed(1)}%</strong></div>
+                      {misOut.risk !== undefined && <div>Risk: <strong>{(misOut.risk*100).toFixed(0)}%</strong></div>}
+                    </div>
+                  ) : (
+                    <div className="mt-2 text-sm text-contrast-muted">No prediction yet.</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="card-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Estimate Difficulty</h3>
+                    <p className="text-contrast-muted text-sm">Question difficulty and bucket.</p>
                   </div>
-                  <details>
-                    <summary className="cursor-pointer opacity-80">Full JSON</summary>
-                    <pre className="mt-2 text-xs overflow-auto p-2 rounded bg-black/5 dark:bg-white/10">{JSON.stringify(diffOut, null, 2)}</pre>
-                  </details>
+                  <button onClick={onDiff} disabled={disabledDiff || loading!==null} className="btn btn-primary">Estimate</button>
                 </div>
-              )}
+                {diffOut ? (
+                  <div className="mt-3 text-sm text-contrast-muted" aria-live="polite">
+                    <div>Norm: <strong>{(diffOut.difficulty_norm ?? 0).toFixed(3)}</strong></div>
+                    <div>Bucket: <strong>{diffOut.bucket}</strong></div>
+                  </div>
+                ) : (
+                  <div className="mt-3 text-sm text-contrast-muted">No estimate yet.</div>
+                )}
+              </div>
             </div>
           </div>
-  </section>
+        </div>
 
         {error && (
           <div className="mt-6 p-3 rounded-lg border border-red-300/40 bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-200">
@@ -342,10 +303,7 @@ export default function Home() {
           </div>
         )}
 
-        <footer className="mt-10 text-xs text-black/50 dark:text-white/50">
-          Set BACKEND_URL env for Next.js server to reach FastAPI. Example (PowerShell):
-          <pre className="mt-1 bg-black/5 dark:bg-white/10 p-2 rounded">$env:BACKEND_URL = "http://127.0.0.1:8000"</pre>
-        </footer>
+  <footer className="mt-10 text-xs text-contrast-muted" role="contentinfo" aria-label="Footer" />
       </div>
     </div>
   );

@@ -3,10 +3,10 @@
 :root {
   /* Light theme */
   --background: #ffffff; /* app background */
-  --foreground: #111827; /* text */
+  --foreground: #e6eef3; /* text - lighter for better contrast on gradients */
   --muted: 0,0,0;
-  --surface: #ffffff; /* card/input bg */
-  --surface-contrast: #0f172a; /* headings on surfaces */
+  --surface: #0b1220; /* card/input bg (slightly dark glass) */
+  --surface-contrast: #ffffff; /* headings on surfaces */
   --border: rgba(17, 24, 39, 0.08);
   --input-bg: #ffffff;
   --input-border: rgba(17, 24, 39, 0.12);
@@ -24,14 +24,14 @@
 /* Explicit dark override when html has .dark class */
 html.dark {
   /* Dark theme */
-  --background: #0b0f14;
-  --foreground: #e5e7eb;
+  --background: #071019;
+  --foreground: #f3f7fb;
   --muted: 255,255,255;
-  --surface: #121826;
-  --surface-contrast: #e5e7eb;
-  --border: rgba(255, 255, 255, 0.12);
-  --input-bg: #0f172a;
-  --input-border: rgba(255,255,255,0.20);
+  --surface: rgba(8,14,22,0.55);
+  --surface-contrast: #ffffff;
+  --border: rgba(255, 255, 255, 0.08);
+  --input-bg: rgba(255,255,255,0.02);
+  --input-border: rgba(255,255,255,0.06);
   --accent-1: #3b82f6;
   --accent-2: #06b6d4;
   --accent-3: #8b5cf6;
@@ -62,7 +62,7 @@ h1, h2, h3 {
 
 /* Vignette wrapper used on main page */
 .vignette { position: relative; }
-.vignette::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.06) 100%); mix-blend-mode: multiply; opacity: 0.6; }
+.vignette::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.03) 100%); mix-blend-mode: multiply; opacity: 0.35; }
 
 @keyframes gridFade {
   0% { opacity: 0.7; }
@@ -135,6 +135,66 @@ h1, h2, h3 {
           mask-composite: exclude;
   pointer-events: none;
 }
+
+/* Glass panel */
+.bg-glass { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border-radius: 12px; border: 1px solid rgba(255,255,255,0.04); box-shadow: 0 8px 30px rgba(2,6,23,0.24); }
+
+/* Enhanced gradient-border mask fallback */
+.gradient-border::before { content: ""; position: absolute; inset: -1px; border-radius: 1.2rem; padding: 1px; background: linear-gradient(135deg, rgba(99,102,241,0.9), rgba(34,211,238,0.75)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events: none; }
+
+/* Button micro-interactions */
+.btn-primary { transition: transform 160ms cubic-bezier(.2,.9,.2,1), box-shadow 160ms ease; }
+.btn-primary:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 40px rgba(59,130,246,0.14); }
+.btn-ghost:hover { transform: translateY(-2px); }
+
+/* Input focus glow matching accents */
+.input:focus, .textarea:focus { box-shadow: 0 8px 24px rgba(99,102,241,0.06), 0 0 0 6px rgba(99,102,241,0.06); }
+
+/* small helper styles */
+.kpi { display: inline-flex; gap: 0.6rem; align-items: baseline; }
+.kpi .value { font-size: 1.35rem; font-weight: 700; }
+.kpi .label { font-size: 0.8rem; color: var(--foreground); opacity: 0.6; }
+
+/* Accessibility fixes: ensure readable text on dark backgrounds */
+/* Make text inside the main app area follow the theme foreground color */
+.vignette, .vignette * {
+  color: var(--foreground) !important;
+}
+
+/* Headings should be high contrast */
+h1, h2, h3 { color: var(--surface-contrast) !important; }
+
+/* Utilities */
+.text-contrast { color: var(--surface-contrast) !important; }
+.text-contrast-muted { color: color-mix(in oklab, var(--surface-contrast), transparent 60%) !important; }
+
+/* Cards and glass panels: increase contrast and border visibility */
+.card, .bg-glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Inputs and textareas: readable text, clearer borders */
+.input, .textarea {
+  color: var(--foreground) !important;
+  background: color-mix(in oklab, var(--input-bg), transparent 6%);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.input::placeholder, .textarea::placeholder {
+  color: color-mix(in oklab, var(--foreground), transparent 60%);
+}
+
+/* Buttons/text in buttons inherit the foreground for consistency */
+.btn, .btn * { color: inherit !important; }
+
+/* Badges and small panels */
+.badge { color: var(--foreground) !important; background: color-mix(in oklab, var(--foreground), transparent 92%); border-color: rgba(255,255,255,0.04); }
+
+/* Pre/code blocks contrast */
+pre, code, pre * { color: var(--foreground) !important; background: transparent !important; }
+
+/* Reduce the vignette overlay if it's making contrast too low */
+.vignette::after { opacity: 0.35 !important; }
 
 /* Hover shine effect */
 .hover-shine { position: static; }
